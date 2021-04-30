@@ -2,10 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
 Route::group(['middleware' => [
     'auth:sanctum',
     'verified'
@@ -18,3 +14,6 @@ Route::group(['middleware' => [
         return view('admin.pages');
     })->name('pages');
 });
+
+Route::get('/{urlslug}', \App\Http\Livewire\Frontpage::class);
+Route::get('/', \App\Http\Livewire\Frontpage::class);
