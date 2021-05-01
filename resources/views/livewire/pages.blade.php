@@ -95,6 +95,20 @@
             </div>
 
             <div class="mt-4">
+                <label for="">
+                    <input type="checkbox" class="form-checkbox text-green-400" value="{{ $isSetToDefaultHomePage }}" wire:model="isSetToDefaultHomePage" >
+                    <span class="ml-2 text-sm text-gray-700">Set as default Home Page</span>
+                </label>
+            </div>
+
+            <div class="mt-4">
+                <label for="">
+                    <input type="checkbox" class="form-checkbox text-red-500" value="{{ $isSetToDefaultNotFoundPage }}" wire:model="isSetToDefaultNotFoundPage" >
+                    <span class="ml-2 text-sm text-red-700">Set as default Error 404 Page</span>
+                </label>
+            </div>
+
+            <div class="mt-4">
                 <x-jet-label for="title" value="{{ __('Content') }}" />
                 <div class="rounded-md shadow-sm">
                     <div class="bg-white">

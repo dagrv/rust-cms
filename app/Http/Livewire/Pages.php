@@ -6,6 +6,7 @@ use App\Models\Page;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Illuminate\Support\Str;
 
 class Pages extends Component
 {
@@ -17,6 +18,8 @@ class Pages extends Component
     public $slug;
     public $title;
     public $content;
+    public $isSetToDefaultHomePage;
+    public $isSetToDefaultNotFoundPage;
 
     /**
      * Creation
@@ -25,9 +28,11 @@ class Pages extends Component
     public function create()
     {
         $this->validate();
+        $this->unassignDefaultHomePage();
+        $this->unassignDefaultNotFoundPage();
         Page::create($this->modelData());
         $this->modalFormVisible = false;
-        $this->resetVars();
+        $this->reset();
     }
 
     /**
@@ -46,6 +51,8 @@ class Pages extends Component
     public function update()
     {
         $this->validate();
+        $this->unassignDefaultHomePage();
+        $this->unassignDefaultNotFoundPage();
         Page::find($this->modelId)->update($this->modelData());
         $this->modalFormVisible = false;
     }
@@ -89,7 +96,18 @@ class Pages extends Component
      */
     public function updatedTitle($value)
     {
-        $this->generateSlug($value);
+        $this->slug = Str::slug($value);
+    }
+
+    public function updatedIsSetToDefaultHomePage()
+    {
+        $this->isSetToDefaultNotFoundPage = null;
+    }
+
+
+    public function updatedIsSetToDefaultNotFoundPage()
+    {
+        $this->isSetToDefaultHomePage = null;
     }
 
     /**
@@ -99,7 +117,7 @@ class Pages extends Component
     public function createShowModal()
     {
         $this->resetValidation();
-        $this->resetVars();
+        $this->reset();
         $this->modalFormVisible = true;
     }
 
@@ -110,7 +128,7 @@ class Pages extends Component
     public function updateShowModal($id)
     {
         $this->resetValidation();
-        $this->resetVars();
+        $this->reset();
         $this->modelId = $id;
         $this->modalFormVisible = true;
         $this->loadModel();
@@ -136,6 +154,8 @@ class Pages extends Component
         $this->title = $data->title;
         $this->slug = $data->slug;
         $this->content = $data->content;
+        $this->isSetToDefaultHomePage = !$data->is_default_home ? null : true;
+        $this->isSetToDefaultNotFoundPage = !$data->is_default_not_found ? null : true;
     }
 
     /**
@@ -147,31 +167,38 @@ class Pages extends Component
         return [
             'title' => $this->title,
             'slug' => $this->slug,
-            'content' => $this->content
+            'content' => $this->content,
+            'is_default_home' => $this->isSetToDefaultHomePage,
+            'is_default_not_found' => $this->isSetToDefaultNotFoundPage
         ];
     }
 
     /**
-     * Reset input fields/form & variables after submitting.
+     * Unassign default homepage from database table
      * @return void
      */
-    public function resetVars()
+    private function unassignDefaultHomePage()
     {
-        $this->modelId = null;
-        $this->title = null;
-        $this->slug = null;
-        $this->content = null;
+        if ($this->isSetToDefaultHomePage != null)
+        {
+            Page::where('is_default_home', true)->update([
+                'is_default_home' => false
+            ]);
+        }
     }
 
     /**
-     * Generating slug url extracted from the title.
+     * Unassign default not found page from database table
      * @return void
      */
-    private function generateSlug($value)
+    private function unassignDefaultNotFoundPage()
     {
-        $process1 = str_replace(' ', '-', $value);
-        $process2 = strtolower($process1);
-        $this->slug = $process2;
+        if ($this->isSetToDefaultNotFoundPage != null)
+        {
+            Page::where('is_default_not_found', true)->update([
+                'is_default_not_found' => false
+            ]);
+        }
     }
 
     /**
