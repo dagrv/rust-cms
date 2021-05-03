@@ -32,12 +32,11 @@
                                         <a
                                             class="text-indigo-600 hover:text-indigo-900"
                                             target="_blank"
-                                            href="{{ URL::to('/'.$item->slug)}}"
-                                        >
+                                            href="{{ URL::to('/'.$item->slug)}}">
                                             {{ $item->slug }}
                                         </a>
                                     </td>
-                                    <td class="px-6 py-4 text-sm whitespace-no-wrap">{!! \Illuminate\Support\Str::limit($item->content, 50, '...') !!}</td>
+                                    <td class="px-6 py-4 text-sm whitespace-no-wrap">{!! \Illuminate\Support\Str::limit($item->content, 50, ' ...') !!}</td>
                                     <td class="px-6 py-4 text-right text-sm">
                                         <x-jet-secondary-button wire:click="updateShowModal({{ $item->id }})">
                                             {{ __('Edit') }}
@@ -61,6 +60,7 @@
             </div>
         </div>
     </div>
+    <!-- End DataTable -->
 
     <br>
 
@@ -117,6 +117,7 @@
                         </div>
                     </div>
                 </div>
+
                 @error('content') <span class="error">{{ $message }}</span> @enderror
             </div>
         </x-slot>
@@ -127,29 +128,26 @@
             </x-jet-secondary-button>
 
             @if ($modelId)
-            <x-jet-secondary-button wire:click="update" wire:loading.attr="disabled">
-                {{ __('Update') }}
-            </x-jet-secondary-button>
-
+                <x-jet-secondary-button wire:click="update" wire:loading.attr="disabled">
+                    {{ __('Update') }}
+                </x-jet-secondary-button>
             @else
-
-            <x-jet-secondary-button wire:click="create" wire:loading.attr="disabled">
-                    {{ __('Create') }}
-            </x-jet-secondary-button>
-                    @endif
+                <x-jet-secondary-button wire:click="create" wire:loading.attr="disabled">
+                        {{ __('Create') }}
+                </x-jet-secondary-button>
+            @endif
         </x-slot>
     </x-jet-dialog-modal>
 
 
     {{-- The Delete Modal --}}
-
     <x-jet-dialog-modal wire:model="modalConfirmDeleteVisible">
         <x-slot name="title">
             {{ __('Delete Page') }}
         </x-slot>
 
         <x-slot name="content">
-            {{ __('Are you sure you want to delete this page? Once the page is deleted, all of its resources and data will be permanently deleted.') }}
+            {{ __('Are you sure you want to delete this page? All resources and data will be permanently deleted.') }}
         </x-slot>
 
         <x-slot name="footer">
